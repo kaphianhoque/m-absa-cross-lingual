@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this code or findings, please cite this work."
+title: "Cross-Lingual Aspect-Based Sentiment Analysis on Low-Resource Languages: XLM-RoBERTa vs mT5 on M-ABSA"
+authors:
+  - family-names: "[Your Last Name]"
+    given-names: "[Your First Name]"
+date-released: 2026-07-11
+url: "https://github.com/[your-username]/[your-repo-name]"
+license: MIT

@@ -1,0 +1,27 @@
+# Data (don't commit raw dataset dumps)
+data/*.csv
+data/*.parquet
+data/*.json
+data/raw/
+data/cache/
+
+# Model checkpoints (large files — keep out of git)
+*.bin
+*.safetensors
+*.pt
+*.ckpt
+checkpoints/
+results/checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.env
+
+# Colab / Jupyter
+*.log
+
+# OS
+.DS_Store
