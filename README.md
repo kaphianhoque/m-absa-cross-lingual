@@ -1,71 +1,150 @@
 # Cross-Lingual ABSA: XLM-RoBERTa vs mT5 on M-ABSA
 
-This repo contains the experimental code accompanying the systematic literature
-review *"Cross-Lingual Aspect-Based Sentiment Analysis on Low-Resource Languages:
-XLM-RoBERTa vs mT5 on M-ABSA."*
+This repository contains the experimental code and results accompanying our study:
 
-## Project goal
+**"Cross-Lingual Aspect-Based Sentiment Analysis on Low-Resource Languages: XLM-RoBERTa vs mT5 on M-ABSA."**
 
-Compare a discriminative multilingual model (XLM-RoBERTa) against a generative
-multilingual model (mT5) on aspect-based sentiment triplet extraction, using the
-[M-ABSA dataset](https://huggingface.co/datasets/Multilingual-NLP/M-ABSA), with a
-focus on zero-shot transfer to low-resource languages (Arabic, Hindi, Swahili,
-Vietnamese).
+The project investigates multilingual Aspect-Based Sentiment Analysis (ABSA), with a focus on model architecture, zero-shot cross-lingual transfer, and domain generalization in lower-resource languages.
 
-## Research questions
+## Project Goal
 
-1. Does XLM-RoBERTa outperform mT5 on M-ABSA for aspect sentiment triplet extraction?
-2. How effective is XLM-RoBERTa at zero-shot transfer to low-resource languages?
-3. Does cross-domain training improve XLM-RoBERTa's cross-lingual transfer performance?
+The main objective of this project is to compare a discriminative multilingual transformer, **XLM-RoBERTa**, with a generative multilingual transformer, **mT5**, on multilingual aspect-based sentiment analysis.
 
-## Repo structure
+The study also examines:
 
-```
-├── data/            # scripts/notebooks for loading & subsetting M-ABSA (raw data not committed)
-├── notebooks/        # Colab notebooks for fine-tuning and evaluation
-├── src/               # reusable Python modules (data prep, training, eval)
-├── results/          # output tables, metrics, plots (generated, not raw data)
-├── LICENSE
-├── CITATION.cff
-└── README.md
-```
+- zero-shot transfer from English to typologically diverse languages,
+- the influence of language similarity and language family,
+- the effect of cross-domain training,
+- and whether combining model predictions through an ensemble can improve performance.
+
+## Research Questions
+
+1. How do XLM-RoBERTa and mT5 compare on multilingual ABSA tasks?
+2. How effectively do multilingual models transfer zero-shot from English to lower-resource languages?
+3. How do linguistic similarity and language family affect cross-lingual transfer?
+4. Does domain-diverse training improve cross-lingual generalization?
+5. Can an ensemble of XLM-RoBERTa and mT5 improve performance over individual models?
 
 ## Dataset
 
-M-ABSA (Wu et al., 2025): 21 languages, 7 domains, aspect-category-sentiment
-triplets. Not committed to this repo — loaded directly from HuggingFace at
-runtime. See `data/` for loading scripts.
+We use the **M-ABSA dataset** (Wu et al., 2025), a multilingual benchmark containing:
+
+- 21 languages
+- 7 domains
+- aspect-category-sentiment annotations
+
+Dataset source:
+
+https://huggingface.co/datasets/Multilingual-NLP/M-ABSA
+
+The raw dataset is not committed to this repository and is loaded directly from Hugging Face at runtime.
 
 ## Models
 
-- **XLM-RoBERTa** (`xlm-roberta-base`) — fine-tuned as a token classification /
-  tagging model.
-- **mT5** (`mt5-base` or `mt5-small`) — fine-tuned as a text-to-text model,
-  generating triplets directly in the dataset's native format.
+### XLM-RoBERTa
 
-Both are fine-tuned on English only, then evaluated zero-shot on low-resource
-target languages.
+`xlm-roberta-base`
 
-## Status
+Fine-tuned as a discriminative token-classification/tagging model for aspect-based sentiment extraction.
 
-🚧 Work in progress — literature review complete, experiments in progress.
+### mT5
 
-## Citation
+`mt5-base` / `mt5-small`
 
-If you use this code, please cite the accompanying paper (see `CITATION.cff`)
-and the original M-ABSA dataset paper:
+Fine-tuned as a generative text-to-text model that generates aspect-category-sentiment outputs directly.
 
-```
-@misc{wu2025mabsa,
-      title={M-ABSA: A Multilingual Dataset for Aspect-Based Sentiment Analysis},
-      author={Chengyan Wu and Bolei Ma and Yihong Liu and Zheyu Zhang and Ningyuan Deng and Yanshu Li and Baolan Chen and Yi Zhang and Yun Xue and Barbara Plank},
-      year={2025},
-      eprint={2502.11824},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
+## Tasks
 
-## License
+The experiments cover:
 
-MIT — see `LICENSE`.
+- **TASD — Target-Aspect-Sentiment Detection**
+- **UABSA — Unified Aspect-Based Sentiment Analysis**
+- **Zero-Shot Cross-Lingual Transfer**
+- **Cross-Domain Generalization**
+- **Confidence-Weighted Ensemble Evaluation**
+
+## Key Results
+
+### Model Comparison
+
+mT5 outperformed XLM-RoBERTa in our experimental setting.
+
+| Model | TASD F1 | UABSA F1 |
+|---|---:|---:|
+| XLM-RoBERTa | 0.5159 | 0.5334 |
+| mT5 | 0.6169 | 0.6809 |
+
+### Ensemble
+
+A confidence-weighted ensemble combining XLM-RoBERTa and mT5 achieved:
+
+**TASD F1: 0.6645**
+
+This outperformed either standalone model on the TASD task.
+
+## Zero-Shot Cross-Lingual Transfer
+
+Models were trained on English restaurant-domain data and evaluated without additional fine-tuning on multiple languages, including:
+
+- Croatian
+- Arabic
+- Hindi
+- Swahili
+- Thai
+- Vietnamese
+
+The results showed substantial variation across languages.
+
+Transfer performance was stronger for some linguistically closer languages, while lower-resource and typologically distant languages generally presented greater challenges.
+
+However, linguistic family alone did not fully explain performance differences.
+
+## Domain Generalization
+
+We compared:
+
+- restaurant-only training
+- restaurant + hotel + food training
+
+Domain diversity significantly affected transfer performance for only a subset of languages.
+
+Notably:
+
+- performance improved for Vietnamese,
+- performance decreased for Swahili and Hindi,
+- several other languages showed no statistically significant change.
+
+Paired bootstrap significance testing with **1,000 resamples** was used to evaluate the reliability of these differences.
+
+## Main Findings
+
+- mT5 outperformed XLM-RoBERTa on both TASD and UABSA.
+- Generative modeling was more effective than token classification in our experimental setting.
+- The ensemble achieved the strongest TASD performance.
+- Zero-shot cross-lingual transfer performance varied substantially across languages.
+- Linguistic similarity influenced transfer, but did not fully explain the results.
+- Domain-diverse training did not consistently improve multilingual transfer.
+- Cross-lingual ABSA performance depends on the interaction between model architecture, language characteristics, and domain similarity.
+
+## Research Gap & Limitations
+
+This study addresses the limited exploration of how **linguistic distance and domain variation jointly affect zero-shot multilingual ABSA**, particularly for lower-resource languages.
+
+However, the study is limited by the languages and domains available in M-ABSA, relies primarily on English as the source language for zero-shot transfer, and shows uneven performance across target languages. Further work could explore multilingual source training, additional low-resource languages, larger models, and deeper qualitative error analysis.
+
+## Repository Structure
+
+```text
+├── data/
+│   └── scripts/notebooks for loading and preprocessing M-ABSA
+├── notebooks/
+│   └── model training and evaluation notebooks
+├── src/
+│   └── reusable Python modules
+├── results/
+│   └── evaluation tables, metrics, and plots
+├── figures/
+│   └── visualizations used in the analysis
+├── README.md
+├── LICENSE
+└── CITATION.cff
